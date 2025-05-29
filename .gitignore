@@ -1,4 +1,7 @@
 com-sites.txt
+CLAUDE.md
+.claude
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

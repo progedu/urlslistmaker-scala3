@@ -16,7 +16,8 @@ object WebPageLoader:
   def apply(
              config: Config,
              client: OkHttpClient,
-             supervisor: ActorRef[SupervisorMessage]
+             supervisor: ActorRef[SupervisorMessage],
+             urlsFileLoader: ActorRef[UrlsFileLoaderMessage]
            ): Behavior[WebPageLoaderMessage] =
 
     Behaviors.setup: context =>
@@ -24,7 +25,15 @@ object WebPageLoader:
       val targetPath = Paths.get(config.outputFile)
       if Files.notExists(targetPath) then Files.createFile(targetPath)
 
+      var originalSender: ActorRef[SupervisorMessage] = supervisor
+
+      def downloadNext(): Unit = context.self ! LoadWebPage
+
       Behaviors.receiveMessage:
+
+        case LoadWebPage =>
+          urlsFileLoader ! LoadUrlsFile(context.self)
+          Behaviors.same
 
         case WebPageUrl(domain) =>
           val url      = s"https://$domain.com"
@@ -32,7 +41,8 @@ object WebPageLoader:
 
           client.newCall(request).enqueue(new Callback:
             override def onFailure(call: Call, e: IOException): Unit =
-              supervisor ! DownloadFailure()          // 通信自体が失敗
+              originalSender ! DownloadFailure()
+              downloadNext()
 
             override def onResponse(call: Call, response: Response): Unit =
               try
@@ -49,12 +59,17 @@ object WebPageLoader:
                       StandardOpenOption.APPEND
                     )
                   match
-                    case Success(_) => supervisor ! DownloadSuccess()
-                    case Failure(_) => supervisor ! DownloadFailure()  // 書き込み失敗
+                    case Success(_) => originalSender ! DownloadSuccess()
+                    case Failure(_) => originalSender ! DownloadFailure()
                 else
-                  supervisor ! DownloadFailure()      // HTTP ステータスが失敗
+                  originalSender ! DownloadFailure()
               finally
                 response.close()
+                downloadNext()
           )
 
+          Behaviors.same
+
+        case Finished =>
+          originalSender ! Finished
           Behaviors.same

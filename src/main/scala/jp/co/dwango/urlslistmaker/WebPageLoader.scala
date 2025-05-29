@@ -60,9 +60,9 @@ object WebPageLoader:
                     )
                   match
                     case Success(_) => originalSender ! DownloadSuccess()
-                    case Failure(_) => originalSender ! DownloadFailure()
+                    case Failure(_) => originalSender ! DownloadFailure()  // 書き込み失敗
                 else
-                  originalSender ! DownloadFailure()
+                  originalSender ! DownloadFailure()      // HTTP ステータスが失敗
               finally
                 response.close()
                 downloadNext()

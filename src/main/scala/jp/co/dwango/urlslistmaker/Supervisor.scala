@@ -36,9 +36,9 @@ object Supervisor:
 
       val router = ctx.spawn(loaderPool, "web-page-loader-pool")
 
-      var finishCount = 0
-      var successCount = 0
-      var failureCount = 0
+      var finishCount        = 0
+      var successCount       = 0
+      var failureCount       = 0
 
       def logProgress(): Unit =
         val total = successCount + failureCount
@@ -46,7 +46,6 @@ object Supervisor:
 
       Behaviors.receiveMessage:
         case Start =>
-          // すべてのWebPageLoaderにLoadWebPageメッセージを送信してスタートさせる
           for _ <- 1 to config.numOfPageLoader do
             router ! LoadWebPage
           Behaviors.same

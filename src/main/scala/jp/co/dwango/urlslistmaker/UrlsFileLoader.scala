@@ -8,15 +8,19 @@ import scala.io.{Codec, Source}
 
 object UrlsFileLoader:
 
-  def apply(config: Config, supervisor: ActorRef[SupervisorMessage]): Behavior[UrlsFileLoaderMessage] =
-    Behaviors.receiveMessage:
+  def apply(config: Config): Behavior[UrlsFileLoaderMessage] =
+    Behaviors.setup: context =>
 
-      case LoadUrlsFile =>
-        val file = Source.fromFile(config.urlsFilePath)(Codec.UTF8)
-        try
-          for line <- file.getLines() do
-            supervisor ! WebPageUrl(line)
-        finally
-          file.close()
+      val file = Source.fromFile(config.urlsFilePath)(Codec.UTF8)
+      val urlsIterator = file.getLines()
 
-        Behaviors.same
+      Behaviors.receiveMessage:
+
+        case LoadUrlsFile(replyTo) =>
+          if urlsIterator.hasNext then
+            val line = urlsIterator.next()
+            replyTo ! WebPageUrl(line)
+          else
+            replyTo ! Finished
+            file.close()
+          Behaviors.same

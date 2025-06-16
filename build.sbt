@@ -11,9 +11,7 @@ lazy val root = (project in file("."))
 
 val PekkoVersion = "1.1.3"
 libraryDependencies ++= Seq(
-  "org.apache.pekko" %% "pekko-actor-typed" % PekkoVersion,
-  "org.apache.pekko" %% "pekko-actor-testkit-typed" % PekkoVersion % Test,
-  "com.squareup.okhttp3" % "okhttp" % "4.12.0",
-  "com.typesafe" % "config" % "1.4.3",
+  "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
+  "org.apache.pekko" %% "pekko-stream-testkit" % PekkoVersion % Test,
   "ch.qos.logback" % "logback-classic" % "1.5.18"
 )

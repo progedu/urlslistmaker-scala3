@@ -43,7 +43,7 @@ object Main:
   @main def runMain(): Unit =
     val urlsFilePath   = "./urls.txt"
     val outputFile     = "./com-sites.txt"
-    val numOfPageLoader = 2000
+    val numOfPageLoader = 16
 
     implicit val system: ActorSystem        = ActorSystem("UrlCrawler")
     implicit val ec:      ExecutionContext  = system.dispatcher

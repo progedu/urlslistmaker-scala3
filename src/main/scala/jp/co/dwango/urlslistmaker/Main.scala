@@ -1,22 +1,20 @@
 package jp.co.dwango.urlslistmaker
 
-import org.apache.pekko
 import org.apache.pekko.NotUsed
-import pekko.actor.ActorSystem
-import pekko.stream.scaladsl.*
-import pekko.stream.IOResult
-import pekko.util.ByteString
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.IOResult
+import org.apache.pekko.stream.scaladsl.*
+import org.apache.pekko.util.ByteString
 
 import java.net.URI
 import java.net.http.{HttpClient, HttpRequest, HttpResponse}
 import java.nio.file.{Paths, StandardOpenOption}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.FutureConverters.*
-import scala.util.matching.Regex
 
 object Main:
 
-  private val TitleR: Regex = "(?i)<title>(.*?)</title>".r
+  private val TitleR = "(?i)<title>(.*?)</title>".r
 
   // HTMLからタイトルを抽出する関数
   private def extractTitle(html: String): String =

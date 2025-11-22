@@ -1,26 +1,24 @@
 package jp.co.dwango.urlslistmaker
 
-import org.apache.pekko
 import org.apache.pekko.NotUsed
-import pekko.actor.ActorSystem
-import pekko.stream.scaladsl.*
-import pekko.stream.IOResult
-import pekko.util.ByteString
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.IOResult
+import org.apache.pekko.stream.scaladsl.*
+import org.apache.pekko.util.ByteString
 
 import java.net.URI
 import java.net.http.{HttpClient, HttpRequest, HttpResponse}
 import java.nio.file.{Paths, StandardOpenOption}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.FutureConverters.*
-import scala.util.matching.Regex
 
 object Main:
 
-  private val TitleR: Regex = "(?i)<title>(.*?)</title>".r
+  private val titleR = "(?i)<title>(.*?)</title>".r
 
   // HTMLからタイトルを抽出する関数
   private def extractTitle(html: String): String =
-    TitleR.findFirstMatchIn(html).map(_.group(1).trim).getOrElse("")
+    titleR.findFirstMatchIn(html).map(_.group(1).trim).getOrElse("")
 
   // URLからタイトルを取得する関数
   private def fetchTitle(url: String)(using
@@ -28,7 +26,7 @@ object Main:
                                      ec:   ExecutionContext
   ): Future[String] =
     val req = HttpRequest
-      .newBuilder(URI.create(s"https://$url"))
+      .newBuilder(URI.create(s"https://$url.com"))
       .timeout(java.time.Duration.ofSeconds(10))
       .GET()
       .build()
@@ -38,16 +36,17 @@ object Main:
       .asScala
       .map(_.body())
       .map(extractTitle)
-      .recover { case ex => s"ERROR: ${ex.getMessage}" }
+      .recover:
+        case ex => s"ERROR: ${ex.getMessage}"
 
   @main def runMain(): Unit =
     val urlsFilePath   = "./urls.txt"
     val outputFile     = "./com-sites.txt"
     val numOfPageLoader = 16
 
-    implicit val system: ActorSystem        = ActorSystem("UrlCrawler")
-    implicit val ec:      ExecutionContext  = system.dispatcher
-    given      http:      HttpClient        = HttpClient.newHttpClient()
+    given system: ActorSystem = ActorSystem("UrlCrawler")
+    given ExecutionContext    = system.dispatcher
+    given HttpClient          = HttpClient.newHttpClient()
 
     // urls.txtファイルからURLを読み込むソース
     val urlSource =
@@ -66,7 +65,7 @@ object Main:
     // 結果をファイルに書き込むシンク
     val fileSink: Sink[(String, String), Future[IOResult]] =
       Flow[(String, String)]
-        .map { case (url, title) => ByteString(s"$url\t$title\n") }
+        .map((url, title) => ByteString(s"$url\t$title\n"))
         .toMat(
           FileIO.toPath(
             Paths.get(outputFile),

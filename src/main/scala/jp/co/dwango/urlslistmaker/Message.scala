@@ -14,4 +14,4 @@ case object LoadUrlsFile extends UrlsFileLoaderMessage
 sealed trait WebPageLoaderMessage extends Message
 
 case class WebPageUrl(domain: String)
-  extends WebPageLoaderMessage with SupervisorMessage
+  extends WebPageLoaderMessage, SupervisorMessage

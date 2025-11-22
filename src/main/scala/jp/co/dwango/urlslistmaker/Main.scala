@@ -36,7 +36,8 @@ object Main:
       .asScala
       .map(_.body())
       .map(extractTitle)
-      .recover { case ex => s"ERROR: ${ex.getMessage}" }
+      .recover:
+        case ex => s"ERROR: ${ex.getMessage}"
 
   @main def runMain(): Unit =
     val urlsFilePath   = "./urls.txt"
@@ -64,7 +65,7 @@ object Main:
     // 結果をファイルに書き込むシンク
     val fileSink: Sink[(String, String), Future[IOResult]] =
       Flow[(String, String)]
-        .map { case (url, title) => ByteString(s"$url\t$title\n") }
+        .map((url, title) => ByteString(s"$url\t$title\n"))
         .toMat(
           FileIO.toPath(
             Paths.get(outputFile),

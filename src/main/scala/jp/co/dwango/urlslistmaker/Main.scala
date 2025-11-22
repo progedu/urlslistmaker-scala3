@@ -26,7 +26,7 @@ object Main:
                                      ec:   ExecutionContext
   ): Future[String] =
     val req = HttpRequest
-      .newBuilder(URI.create(s"https://$url"))
+      .newBuilder(URI.create(s"https://$url.com"))
       .timeout(java.time.Duration.ofSeconds(10))
       .GET()
       .build()

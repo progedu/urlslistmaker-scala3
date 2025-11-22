@@ -50,12 +50,12 @@ object Supervisor:
             router ! LoadWebPage
           Behaviors.same
 
-        case DownloadSuccess() =>
+        case DownloadSuccess =>
           successCount += 1
           logProgress()
           Behaviors.same
 
-        case DownloadFailure() =>
+        case DownloadFailure =>
           failureCount += 1
           logProgress()
           Behaviors.same

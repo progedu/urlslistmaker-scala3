@@ -43,9 +43,9 @@ object Main:
     val outputFile     = "./com-sites.txt"
     val numOfPageLoader = 16
 
-    implicit val system: ActorSystem        = ActorSystem("UrlCrawler")
-    implicit val ec:      ExecutionContext  = system.dispatcher
-    given      http:      HttpClient        = HttpClient.newHttpClient()
+    given system: ActorSystem = ActorSystem("UrlCrawler")
+    given ExecutionContext    = system.dispatcher
+    given HttpClient          = HttpClient.newHttpClient()
 
     // urls.txtファイルからURLを読み込むソース
     val urlSource =

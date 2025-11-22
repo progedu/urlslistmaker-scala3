@@ -7,8 +7,8 @@ sealed trait Message
 sealed trait SupervisorMessage extends Message
 case object Start extends SupervisorMessage
 case object Finished extends SupervisorMessage with WebPageLoaderMessage
-case class DownloadSuccess() extends SupervisorMessage
-case class DownloadFailure() extends SupervisorMessage
+case object DownloadSuccess extends SupervisorMessage
+case object DownloadFailure extends SupervisorMessage
 
 sealed trait UrlsFileLoaderMessage extends Message
 case class LoadUrlsFile(replyTo: ActorRef[WebPageLoaderMessage]) extends UrlsFileLoaderMessage

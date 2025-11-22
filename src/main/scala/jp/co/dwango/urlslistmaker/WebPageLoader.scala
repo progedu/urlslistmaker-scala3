@@ -41,7 +41,7 @@ object WebPageLoader:
 
           client.newCall(request).enqueue(new Callback:
             override def onFailure(call: Call, e: IOException): Unit =
-              originalSender ! DownloadFailure()
+              originalSender ! DownloadFailure
               downloadNext()
 
             override def onResponse(call: Call, response: Response): Unit =
@@ -59,10 +59,10 @@ object WebPageLoader:
                       StandardOpenOption.APPEND
                     )
                   match
-                    case Success(_) => originalSender ! DownloadSuccess()
-                    case Failure(_) => originalSender ! DownloadFailure()  // 書き込み失敗
+                    case Success(_) => originalSender ! DownloadSuccess
+                    case Failure(_) => originalSender ! DownloadFailure  // 書き込み失敗
                 else
-                  originalSender ! DownloadFailure()      // HTTP ステータスが失敗
+                  originalSender ! DownloadFailure      // HTTP ステータスが失敗
               finally
                 response.close()
                 downloadNext()

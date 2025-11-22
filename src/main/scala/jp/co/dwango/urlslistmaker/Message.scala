@@ -6,7 +6,7 @@ sealed trait Message
 
 sealed trait SupervisorMessage extends Message
 case object Start extends SupervisorMessage
-case object Finished extends SupervisorMessage with WebPageLoaderMessage
+case object Finished extends SupervisorMessage, WebPageLoaderMessage
 case object DownloadSuccess extends SupervisorMessage
 case object DownloadFailure extends SupervisorMessage
 

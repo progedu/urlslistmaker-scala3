@@ -32,7 +32,7 @@ object WebPageLoader:
 
           client.newCall(request).enqueue(new Callback:
             override def onFailure(call: Call, e: IOException): Unit =
-              supervisor ! DownloadFailure()          // 通信自体が失敗
+              supervisor ! DownloadFailure          // 通信自体が失敗
 
             override def onResponse(call: Call, response: Response): Unit =
               try
@@ -49,10 +49,10 @@ object WebPageLoader:
                       StandardOpenOption.APPEND
                     )
                   match
-                    case Success(_) => supervisor ! DownloadSuccess()
-                    case Failure(_) => supervisor ! DownloadFailure()  // 書き込み失敗
+                    case Success(_) => supervisor ! DownloadSuccess
+                    case Failure(_) => supervisor ! DownloadFailure  // 書き込み失敗
                 else
-                  supervisor ! DownloadFailure()      // HTTP ステータスが失敗
+                  supervisor ! DownloadFailure      // HTTP ステータスが失敗
               finally
                 response.close()
           )

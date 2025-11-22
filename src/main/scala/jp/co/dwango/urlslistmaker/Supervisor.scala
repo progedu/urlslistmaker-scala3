@@ -56,12 +56,12 @@ object Supervisor:
           router ! url
           Behaviors.same
 
-        case DownloadSuccess() =>
+        case DownloadSuccess =>
           successCount += 1
           logAndCheckFinish()
           Behaviors.same
 
-        case DownloadFailure() =>
+        case DownloadFailure =>
           failureCount += 1
           logAndCheckFinish()
           Behaviors.same

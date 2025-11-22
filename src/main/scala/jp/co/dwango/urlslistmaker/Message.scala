@@ -2,7 +2,7 @@ package jp.co.dwango.urlslistmaker
 
 import org.apache.pekko.actor.typed.ActorRef
 
-trait Message
+sealed trait Message
 
 sealed trait SupervisorMessage extends Message
 case object Start extends SupervisorMessage

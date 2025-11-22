@@ -1,6 +1,6 @@
 package jp.co.dwango.urlslistmaker
 
-trait Message
+sealed trait Message
 
 sealed trait SupervisorMessage extends Message
 case object Start extends SupervisorMessage

@@ -14,11 +14,11 @@ import scala.jdk.FutureConverters.*
 
 object Main:
 
-  private val TitleR = "(?i)<title>(.*?)</title>".r
+  private val titleR = "(?i)<title>(.*?)</title>".r
 
   // HTMLからタイトルを抽出する関数
   private def extractTitle(html: String): String =
-    TitleR.findFirstMatchIn(html).map(_.group(1).trim).getOrElse("")
+    titleR.findFirstMatchIn(html).map(_.group(1).trim).getOrElse("")
 
   // URLからタイトルを取得する関数
   private def fetchTitle(url: String)(using
